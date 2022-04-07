@@ -51,3 +51,8 @@ main {
 .img-large {
   max-width: 100%;
 }
+
+.img-thumbnail {
+  height: 120px;
+  width: 100px;
+}
