@@ -22,17 +22,32 @@ main {
 }
 
 .product {
-  border: 1px #404040 solid;
+  /* border: 1px #404040 solid; */
   margin: 1rem;
 }
 
 .product img {
   width: 100%;
   max-width: 400px;
-  object-fit: cover;
   height: 400px;
+}
+
+.btn-primary {
+  background-color: #f0c040;
+  color: black;
 }
 
 .product-info {
   padding: 1rem;
+}
+
+.rating span {
+  color: #ffc000;
+}
+.rating span strong {
+  margin-left: 5px;
+}
+
+.img-large {
+  max-width: 100%;
 }
