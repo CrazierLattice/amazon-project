@@ -56,3 +56,8 @@ main {
   height: 120px;
   width: 100px;
 }
+
+.small-container {
+  max-width: 600px;
+  border: 2px solid black;
+}

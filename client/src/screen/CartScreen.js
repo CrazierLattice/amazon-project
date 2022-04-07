@@ -4,16 +4,52 @@ import { Store } from '../Store';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import MessageBox from '../components/MessageBox';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ListGroup from 'react-bootstrap/esm/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import axios from 'axios';
 
 const CartScreen = () => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
+  const navigate = useNavigate();
   const {
     cart: { cartItems },
   } = state;
+  const baseURL = 'http://localhost:5000';
+  const totalItemsInCart = cartItems.reduce(
+    (prevValue, currValue) => prevValue + currValue.quantity,
+    0
+  );
+  const totalToPay = cartItems
+    .reduce(
+      (prevValue, currValue) =>
+        prevValue + currValue.quantity * currValue.price,
+      0
+    )
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const updateCartHandler = async (item, quantity) => {
+    const { data } = await axios.get(`${baseURL}/api/products/${item._id}`);
+    if (data.countInStock < quantity)
+      return window.alert('Sorry, Product is out of stock.');
+    ctxDispatch({
+      type: 'CART_ADD_ITEM',
+      payload: { ...item, quantity },
+    });
+  };
+
+  const removeItemHandler = (item) => {
+    ctxDispatch({
+      type: 'CART_REMOVE_ITEM',
+      payload: item,
+    });
+  };
+
+  const checkOutHandler = () => {
+    navigate('/signin?redirect=/shipping');
+  };
+
   return (
     <div>
       <Helmet>
@@ -41,12 +77,21 @@ const CartScreen = () => {
                       <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
                     <Col md={3}>
-                      <Button variant="light" disabled={item.quantity === 1}>
+                      <Button
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity - 1)
+                        }
+                        variant="light"
+                        disabled={item.quantity === 1}
+                      >
                         <i className="fas fa-minus-circle"></i>
                       </Button>
                       {'  '}
                       <span>{item.quantity}</span>{' '}
                       <Button
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity + 1)
+                        }
                         variant="light"
                         disabled={item.quantity === item.countInStock}
                       >
@@ -55,7 +100,10 @@ const CartScreen = () => {
                     </Col>
                     <Col md={3}>${item.price}</Col>
                     <Col md={2}>
-                      <Button variant="light">
+                      <Button
+                        onClick={() => removeItemHandler(item)}
+                        variant="light"
+                      >
                         <i className="fas fa-trash"></i>
                       </Button>
                     </Col>
@@ -71,22 +119,13 @@ const CartScreen = () => {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <h3>
-                    Subtotal (
-                    {cartItems.reduce(
-                      (prevValue, currValue) => prevValue + currValue.quantity,
-                      0
-                    )}{' '}
-                    items) : $
-                    {cartItems.reduce(
-                      (prevValue, currValue) =>
-                        prevValue + currValue.quantity * currValue.price,
-                      0
-                    )}
+                    Subtotal ({totalItemsInCart} items) : ${totalToPay}
                   </h3>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <div className="d-grid">
                     <Button
+                      onClick={checkOutHandler}
                       type="button"
                       variant="primary"
                       disabled={cartItems.length === 0}
