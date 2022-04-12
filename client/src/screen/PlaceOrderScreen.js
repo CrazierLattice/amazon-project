@@ -8,12 +8,15 @@ import { Helmet } from 'react-helmet-async';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { Store } from '../Store';
 import { Link, useNavigate } from 'react-router-dom';
-import ListGroupItem from 'react-bootstrap/esm/ListGroupItem';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
+import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
 
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { cart } = state;
+  const { cart, loading, userInfo } = state;
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
   cart.itemsPrice = round2(
     cart.cartItems.reduce(
@@ -21,11 +24,34 @@ const PlaceOrderScreen = () => {
       0
     )
   );
-  console.log(cart.itemsPrice);
   cart.shippingPrice = cart.itemsPrice > 100 ? round2(0) : round2(10);
   cart.taxPrice = round2(0.15 * cart.itemsPrice);
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
-  const placeOrderHandler = async () => {};
+  const placeOrderHandler = async () => {
+    try {
+      ctxDispatch({ type: 'CREATE_REQUEST' });
+      const { data } = await axios.post(
+        'http://localhost:5000/api/orders',
+        {
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          taxPrice: cart.taxPrice,
+          totalPrice: cart.totalPrice,
+        },
+        { headers: { authorization: `Bearer ${userInfo.token}` } }
+      );
+      ctxDispatch({ type: 'CART_CLEAR' });
+      ctxDispatch({ type: 'CREATE_SUCCESS' });
+      localStorage.removeItem('cartItems');
+      navigate(`/order/${data.order._id}`);
+    } catch (error) {
+      ctxDispatch({ type: 'CREATE_FAIL' });
+      toast.error(getError(error));
+    }
+  };
 
   useEffect(() => {
     if (!cart.paymentMethod) return navigate('/payment');
@@ -129,6 +155,7 @@ const PlaceOrderScreen = () => {
                       Place Order
                     </Button>
                   </div>
+                  {loading && <LoadingBox></LoadingBox>}
                 </ListGroup.Item>
               </ListGroup>
             </Card.Body>
