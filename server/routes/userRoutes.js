@@ -31,4 +31,33 @@ userRouter.post(
   })
 );
 
+userRouter.post(
+  '/signup',
+  expressAsyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+      const existingUser = await User.findOne({ email });
+      console.log(existingUser);
+      if (existingUser)
+        return res.status(403).json({ message: 'Email is already taken.' });
+      const newUser = new User({
+        name,
+        email,
+        password: bcryptjs.hashSync(password),
+      });
+      await newUser.save();
+      res.send({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+        token: generateToken(newUser),
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(403).send({ error });
+    }
+  })
+);
+
 export default userRouter;

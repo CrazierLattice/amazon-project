@@ -31,6 +31,7 @@ const SigninScreen = () => {
         }
       );
       localStorage.setItem('userInfo', JSON.stringify(data));
+      console.log(data);
       ctxDispatch({
         type: 'USER_SIGNIN',
         payload: data,
