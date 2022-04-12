@@ -15,8 +15,9 @@ import CartScreen from './screen/CartScreen';
 import SigninScreen from './screen/SigninScreen';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import ShippingAddressScreen from './screen/ShippingAddressScreen';
-import PaymentScreen from './screen/PaymentScreen';
+import PaymentMethodScreen from './screen/PaymentMethodScreen';
 import SignupScreen from './screen/SignupScreen';
+import PlaceOrderScreen from './screen/PlaceOrderScreen';
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
@@ -27,6 +28,7 @@ function App() {
     });
     localStorage.removeItem('userInfo');
     localStorage.removeItem('shippingAddress');
+    localStorage.removeItem('paymentMethod');
   };
   return (
     <BrowserRouter>
@@ -81,7 +83,8 @@ function App() {
               <Route path="/signin" element={<SigninScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/shipping" element={<ShippingAddressScreen />} />
-              <Route path="/payment" element={<PaymentScreen />} />
+              <Route path="/payment" element={<PaymentMethodScreen />} />
+              <Route path="/placeorder" element={<PlaceOrderScreen />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>
