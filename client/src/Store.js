@@ -3,10 +3,16 @@ import { createContext, useReducer } from 'react';
 export const Store = createContext();
 
 const initialState = {
+  products: [],
+  loading: true,
+  error: '',
   cart: {
     cartItems: localStorage.getItem('cartItems')
       ? JSON.parse(localStorage.getItem('cartItems'))
       : [],
+    shippingAddress: localStorage.getItem('shippingAddress')
+      ? JSON.parse(localStorage.getItem('shippingAddress'))
+      : null,
   },
   userInfo: localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
@@ -15,9 +21,15 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return { ...state, products: action.payload, loading: false };
+
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
     case 'CART_ADD_ITEM': {
       const newItem = action.payload;
-      console.log(newItem);
       const existItem = state.cart.cartItems.find(
         (item) => item._id === newItem._id
       );
@@ -43,8 +55,17 @@ const reducer = (state, action) => {
       return { ...state, userInfo: action.payload };
 
     case 'USER_SIGNOUT':
-      return { ...state, userInfo: null };
+      return {
+        ...state,
+        userInfo: null,
+        cart: { cartItems: [], shippingAddress: {} },
+      };
 
+    case 'SAVE_SHIPPING_ADDRESS':
+      return {
+        ...state,
+        cart: { ...state.cart, shippingAddress: action.payload },
+      };
     default:
       return state;
   }
