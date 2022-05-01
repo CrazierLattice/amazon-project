@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect } from 'react';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { Store } from '../Store';
 import axios from 'axios';
 import { getError } from '../utils';
@@ -10,13 +11,48 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { toast } from 'react-toastify';
 
 const OrderScreen = () => {
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, order } = state;
+  const { userInfo, order, loadingPay, successPay } = state;
   const params = useParams();
   const { id: orderId } = params;
   const navigate = useNavigate();
+
+  const createOrder = (data, actions) => {
+    return actions.order
+      .create({
+        purchase_units: [{ amount: { value: order.totalPrice } }],
+      })
+      .then((orderID) => {
+        return orderID;
+      });
+  };
+
+  const onApprove = (data, actions) => {
+    return actions.order.capture().then(async (details) => {
+      try {
+        ctxDispatch({ type: 'PAY_REQUEST' });
+        const { data } = await axios.put(
+          `http://localhost:5000/api/orders/${order._id}/pay`,
+          details,
+          { headers: { authorization: `Bearer ${userInfo.token}` } }
+        );
+        ctxDispatch({ type: 'PAY_SUCCESS', payload: data });
+        toast.success('Order is Paid');
+      } catch (error) {
+        console.log(error);
+        ctxDispatch({ type: 'PAY_FAIL', payload: getError(error) });
+        toast.error(getError(error));
+      }
+    });
+  };
+
+  const onError = (error) => {
+    toast.error(getError(error));
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -41,10 +77,31 @@ const OrderScreen = () => {
       console.log(order);
     };
     if (!userInfo) return navigate('/login');
-    if (!order?._id || (order?._id && order?._id !== orderId)) {
+    if (!order?._id || successPay || (order?._id && order?._id !== orderId)) {
       fetchOrder();
+      if (successPay) {
+        ctxDispatch({ type: 'PAY_RESET' });
+      }
+    } else {
+      const loadPaypalScript = async () => {
+        const { data: clientId } = await axios.get(
+          'http://localhost:5000/api/keys/paypal',
+          {
+            headers: { authorization: `Bearer ${userInfo?.token}` },
+          }
+        );
+        paypalDispatch({
+          type: 'resetOptions',
+          value: {
+            'client-id': clientId,
+            currency: 'USD',
+          },
+        });
+        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+      };
+      loadPaypalScript();
     }
-  }, [order, userInfo, orderId, navigate]);
+  }, [order, userInfo, orderId, navigate, paypalDispatch, successPay]);
 
   return state.loading ? (
     <LoadingBox></LoadingBox>
@@ -142,6 +199,22 @@ const OrderScreen = () => {
                     <Col>${order?.totalPrice?.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
+                {!order?.isPaid && (
+                  <ListGroup.Item>
+                    {isPending ? (
+                      <LoadingBox></LoadingBox>
+                    ) : (
+                      <div>
+                        <PayPalButtons
+                          createOrder={createOrder}
+                          onApprove={onApprove}
+                          onError={onError}
+                        ></PayPalButtons>
+                      </div>
+                    )}
+                    {loadingPay && <LoadingBox></LoadingBox>}
+                  </ListGroup.Item>
+                )}
               </ListGroup>
             </Card.Body>
           </Card>

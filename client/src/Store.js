@@ -21,6 +21,8 @@ const initialState = {
     ? JSON.parse(localStorage.getItem('userInfo'))
     : null,
   order: {},
+  successPay: false,
+  loadingPay: false,
 };
 
 const reducer = (state, action) => {
@@ -98,6 +100,15 @@ const reducer = (state, action) => {
     case 'CREATE_FAIL':
       return { ...state, loading: false };
 
+    case 'PAY_REQUEST':
+      return { ...state, loadingPay: true };
+    case 'PAY_SUCCESS':
+      return { ...state, loadingPay: false, succesPay: true };
+    case 'PAY_FAIL':
+      return { ...state, loadingPay: false };
+
+    case 'PAY_RESET':
+      return { ...state, loadingPay: false, successPay: false };
     default:
       return state;
   }

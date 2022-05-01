@@ -6,11 +6,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import StoreProvider from './Store';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 createRoot(document.getElementById('root')).render(
   <StoreProvider>
     <HelmetProvider>
-      <App />
+      <PayPalScriptProvider deferLoading={true}>
+        <App />
+      </PayPalScriptProvider>
     </HelmetProvider>
   </StoreProvider>
 );
