@@ -59,8 +59,8 @@ const CartScreen = () => {
       <Row>
         <Col md={8}>
           {cartItems.length === 0 ? (
-            <MessageBox error="Cart is empty.">
-              <Link to="/">Go Shopping</Link>
+            <MessageBox>
+              Cart is empty. <Link to="/">Go Shopping</Link>
             </MessageBox>
           ) : (
             <ListGroup>

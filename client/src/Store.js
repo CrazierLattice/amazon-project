@@ -20,6 +20,7 @@ const initialState = {
   userInfo: localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
     : null,
+  order: {},
 };
 
 const reducer = (state, action) => {
@@ -30,6 +31,15 @@ const reducer = (state, action) => {
       return { ...state, products: action.payload, loading: false };
 
     case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'FETCH_ORDER_REQUEST':
+      console.log('request');
+      return { ...state, loading: true, error: '' };
+    case 'FETCH_ORDER_SUCCESS':
+      console.log('success');
+      return { ...state, loading: false, order: action.payload, error: '' };
+    case 'FETCH_ORDER_FAILED':
+      console.log('fail');
       return { ...state, loading: false, error: action.payload };
     case 'CART_ADD_ITEM': {
       const newItem = action.payload;

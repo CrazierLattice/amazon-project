@@ -72,7 +72,7 @@ const ProductScreen = () => {
   return loading ? (
     <LoadingBox />
   ) : error ? (
-    <MessageBox error={error} variant="danger"></MessageBox>
+    <MessageBox variant="danger">{error}</MessageBox>
   ) : (
     <div>
       <Row>
