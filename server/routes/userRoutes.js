@@ -2,7 +2,8 @@ import bcryptjs from 'bcryptjs';
 import express from 'express';
 import User from '../models/userModel.js';
 import expressAsyncHandler from 'express-async-handler';
-import { generateToken } from '../utils.js';
+import { generateToken, isAuth } from '../utils.js';
+import { Router } from 'express';
 
 const userRouter = express.Router();
 
@@ -56,6 +57,38 @@ userRouter.post(
     } catch (error) {
       console.log(error);
       res.status(403).send({ error });
+    }
+  })
+);
+
+userRouter.put(
+  '/updateprofile',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { name, email, password, confirmPassword } = req.body;
+      if (password !== confirmPassword)
+        return res.status(403).json({ message: 'Password must match!' });
+      const existingEmail = await User.find({ email });
+      console.log(existingEmail);
+      if (existingEmail.length)
+        return res.status(403).json({ message: 'Email already taken' });
+      const hashedPassword = bcryptjs.hashSync(password, 8);
+      const user = await User.findById({ _id: req.user._id });
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.password = hashedPassword;
+      const newUser = await user.save();
+
+      res.send({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+        token: generateToken(newUser),
+      });
+    } catch (error) {
+      res.status(403).send({ message: 'User not found' });
     }
   })
 );

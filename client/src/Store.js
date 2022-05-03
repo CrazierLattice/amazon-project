@@ -103,7 +103,12 @@ const reducer = (state, action) => {
     case 'PAY_REQUEST':
       return { ...state, loadingPay: true };
     case 'PAY_SUCCESS':
-      return { ...state, loadingPay: false, succesPay: true };
+      return {
+        ...state,
+        loadingPay: false,
+        succesPay: true,
+        order: action.payload,
+      };
     case 'PAY_FAIL':
       return { ...state, loadingPay: false };
 
@@ -116,7 +121,6 @@ const reducer = (state, action) => {
       return { ...state, orders: action.payload, loading: false };
     case 'FETCH_ORDERS_FAIL':
       return { ...state, loading: false, error: action.payload };
-
     default:
       return state;
   }

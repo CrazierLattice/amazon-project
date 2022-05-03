@@ -40,6 +40,7 @@ const OrderScreen = () => {
           details,
           { headers: { authorization: `Bearer ${userInfo.token}` } }
         );
+        console.log('data', data);
         ctxDispatch({ type: 'PAY_SUCCESS', payload: data });
         toast.success('Order is Paid');
       } catch (error) {

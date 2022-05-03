@@ -43,6 +43,7 @@ const SigninScreen = () => {
   };
 
   useEffect(() => {
+    console.log(redirectUrl);
     if (userInfo) {
       navigate(redirect);
     }
