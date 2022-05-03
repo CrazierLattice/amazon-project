@@ -69,10 +69,7 @@ userRouter.put(
       const { name, email, password, confirmPassword } = req.body;
       if (password !== confirmPassword)
         return res.status(403).json({ message: 'Password must match!' });
-      const existingEmail = await User.find({ email });
-      console.log(existingEmail);
-      if (existingEmail.length)
-        return res.status(403).json({ message: 'Email already taken' });
+
       const hashedPassword = bcryptjs.hashSync(password, 8);
       const user = await User.findById({ _id: req.user._id });
       user.name = name || user.name;
