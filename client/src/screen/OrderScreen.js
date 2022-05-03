@@ -36,7 +36,7 @@ const OrderScreen = () => {
       try {
         ctxDispatch({ type: 'PAY_REQUEST' });
         const { data } = await axios.put(
-          `http://localhost:5000/api/orders/${order._id}/pay`,
+          `https://mishka-store.herokuapp.com/api/orders/${order._id}/pay`,
           details,
           { headers: { authorization: `Bearer ${userInfo.token}` } }
         );
@@ -60,7 +60,7 @@ const OrderScreen = () => {
       try {
         ctxDispatch({ type: 'FETCH_ORDER_REQUEST' });
         const { data } = await axios.get(
-          `http://localhost:5000/api/orders/${orderId}`,
+          `https://mishka-store.herokuapp.com/api/orders/${orderId}`,
           {
             headers: { authorization: `Bearer ${userInfo.token}` },
           }
