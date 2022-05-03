@@ -86,7 +86,7 @@ const OrderScreen = () => {
     } else {
       const loadPaypalScript = async () => {
         const { data: clientId } = await axios.get(
-          'http://localhost:5000/api/keys/paypal',
+          'https://mishka-store.herokuapp.com/api/keys/paypal',
           {
             headers: { authorization: `Bearer ${userInfo?.token}` },
           }

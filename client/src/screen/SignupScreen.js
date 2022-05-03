@@ -28,7 +28,7 @@ const SignupScreen = () => {
       return toast.error('Password do not match!');
     try {
       const { data } = await axios.post(
-        'http://localhost:5000/api/users/signup',
+        'https://mishka-store.herokuapp.com/api/users/signup',
         {
           name,
           email,

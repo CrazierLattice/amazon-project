@@ -16,7 +16,7 @@ const CartScreen = () => {
   const {
     cart: { cartItems },
   } = state;
-  const baseURL = 'http://localhost:5000';
+  const baseURL = 'https://mishka-store.herokuapp.com/';
   const totalItemsInCart = cartItems.reduce(
     (prevValue, currValue) => prevValue + currValue.quantity,
     0

@@ -37,7 +37,7 @@ const ProductScreen = () => {
     loading: true,
     error: '',
   });
-  const baseURL = 'http://localhost:5000';
+  const baseURL = 'https://mishka-store.herokuapp.com';
 
   useEffect(() => {
     const fetchData = async () => {

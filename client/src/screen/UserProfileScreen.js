@@ -30,7 +30,7 @@ const UserProfileScreen = () => {
     try {
       e.preventDefault();
       const { data } = await axios.put(
-        'http://localhost:5000/api/users/updateprofile',
+        'https://mishka-store.herokuapp.com/api/users/updateprofile',
         { name, email, password, confirmPassword },
         { headers: { authorization: `Bearer ${userInfo.token}` } }
       );

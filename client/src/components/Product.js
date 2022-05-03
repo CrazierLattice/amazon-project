@@ -7,7 +7,7 @@ import { Store } from '../Store';
 import axios from 'axios';
 
 const Product = ({ product }) => {
-  const baseURL = 'http://localhost:5000';
+  const baseURL = 'https://mishka-store.herokuapp.com';
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart } = state;
   const addToCartHandler = async () => {
