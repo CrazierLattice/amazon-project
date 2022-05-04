@@ -20,7 +20,7 @@ const HomeScreen = () => {
         type: 'FETCH_REQUEST',
       });
       try {
-        const result = await axios.get(`${baseURL}/api/products`);
+        const result = await axios.get('/api/products');
         ctxDispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         ctxDispatch({ type: 'FETCH_FAIL', payload: err.message });
