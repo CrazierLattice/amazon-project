@@ -31,7 +31,7 @@ const PlaceOrderScreen = () => {
     try {
       ctxDispatch({ type: 'CREATE_REQUEST' });
       const { data } = await axios.post(
-        'https://mishka-store.herokuapp.com/api/orders',
+        '/api/orders',
         {
           orderItems: cart.cartItems,
           shippingAddress: cart.shippingAddress,

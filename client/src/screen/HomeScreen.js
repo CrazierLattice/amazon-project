@@ -12,7 +12,6 @@ import { Store } from '../Store';
 const HomeScreen = () => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { products, loading, error } = state;
-  const baseURL = 'https://mishka-store.herokuapp.com';
 
   useEffect(() => {
     const fetchData = async () => {

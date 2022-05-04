@@ -23,13 +23,10 @@ const SigninScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        'https://mishka-store.herokuapp.com/api/users/signin',
-        {
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post('/api/users/signin', {
+        email,
+        password,
+      });
       localStorage.setItem('userInfo', JSON.stringify(data));
       console.log(data);
       ctxDispatch({

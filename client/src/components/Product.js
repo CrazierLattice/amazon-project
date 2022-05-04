@@ -7,13 +7,12 @@ import { Store } from '../Store';
 import axios from 'axios';
 
 const Product = ({ product }) => {
-  const baseURL = 'https://mishka-store.herokuapp.com';
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart } = state;
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((item) => item._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`${baseURL}/api/products/${product._id}`);
+    const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity)
       return window.alert('Sorry, Product is out of stock.');
     ctxDispatch({

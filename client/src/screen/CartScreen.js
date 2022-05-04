@@ -16,7 +16,6 @@ const CartScreen = () => {
   const {
     cart: { cartItems },
   } = state;
-  const baseURL = 'https://mishka-store.herokuapp.com/';
   const totalItemsInCart = cartItems.reduce(
     (prevValue, currValue) => prevValue + currValue.quantity,
     0
@@ -30,7 +29,7 @@ const CartScreen = () => {
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`${baseURL}/api/products/${item._id}`);
+    const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity)
       return window.alert('Sorry, Product is out of stock.');
     ctxDispatch({

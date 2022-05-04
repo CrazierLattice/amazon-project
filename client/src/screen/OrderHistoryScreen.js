@@ -22,10 +22,9 @@ const OrderHistoryScreen = () => {
     const fetchData = async () => {
       ctxDispatch({ type: 'FETCH_ORDERS_REQUEST' });
       try {
-        const { data } = await axios.get(
-          `https://mishka-store.herokuapp.com/api/orders/mine`,
-          { headers: { authorization: `Bearer ${userInfo.token}` } }
-        );
+        const { data } = await axios.get('/api/orders/mine', {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
         ctxDispatch({
           type: 'FETCH_ORDERS_SUCCESS',
           payload: data,

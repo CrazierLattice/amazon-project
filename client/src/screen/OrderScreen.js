@@ -36,7 +36,7 @@ const OrderScreen = () => {
       try {
         ctxDispatch({ type: 'PAY_REQUEST' });
         const { data } = await axios.put(
-          `https://mishka-store.herokuapp.com/api/orders/${order._id}/pay`,
+          `/api/orders/${order._id}/pay`,
           details,
           { headers: { authorization: `Bearer ${userInfo.token}` } }
         );
@@ -59,12 +59,9 @@ const OrderScreen = () => {
     const fetchOrder = async () => {
       try {
         ctxDispatch({ type: 'FETCH_ORDER_REQUEST' });
-        const { data } = await axios.get(
-          `https://mishka-store.herokuapp.com/api/orders/${orderId}`,
-          {
-            headers: { authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        const { data } = await axios.get(`/api/orders/${orderId}`, {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
         console.log(data);
         ctxDispatch({ type: 'FETCH_ORDER_SUCCESS', payload: data });
       } catch (error) {
@@ -85,12 +82,9 @@ const OrderScreen = () => {
       }
     } else {
       const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get(
-          'https://mishka-store.herokuapp.com/api/keys/paypal',
-          {
-            headers: { authorization: `Bearer ${userInfo?.token}` },
-          }
-        );
+        const { data: clientId } = await axios.get('/api/keys/paypal', {
+          headers: { authorization: `Bearer ${userInfo?.token}` },
+        });
         paypalDispatch({
           type: 'resetOptions',
           value: {

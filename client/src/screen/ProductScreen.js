@@ -37,7 +37,6 @@ const ProductScreen = () => {
     loading: true,
     error: '',
   });
-  const baseURL = 'https://mishka-store.herokuapp.com';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +44,7 @@ const ProductScreen = () => {
         type: 'FETCH_REQUEST',
       });
       try {
-        const result = await axios.get(`${baseURL}/api/products/slug/${slug}`);
+        const result = await axios.get(`/api/products/slug/${slug}`);
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
@@ -59,7 +58,7 @@ const ProductScreen = () => {
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((item) => item._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`${baseURL}/api/products/${product._id}`);
+    const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity)
       return window.alert('Sorry, Product is out of stock.');
     ctxDispatch({
