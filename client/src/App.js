@@ -9,7 +9,7 @@ import Nav from 'react-bootstrap/Nav';
 import Badge from 'react-bootstrap/Badge';
 import Container from 'react-bootstrap/Container';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Store } from './Store';
 import CartScreen from './screen/CartScreen';
 import SigninScreen from './screen/SigninScreen';
@@ -21,9 +21,11 @@ import PlaceOrderScreen from './screen/PlaceOrderScreen';
 import OrderScreen from './screen/OrderScreen';
 import OrderHistoryScreen from './screen/OrderHistoryScreen';
 import UserProfileScreen from './screen/UserProfileScreen';
+import Button from 'react-bootstrap/Button';
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
+  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
 
   const signoutHandler = () => {
     ctxDispatch({
@@ -35,11 +37,23 @@ function App() {
   };
   return (
     <BrowserRouter>
-      <div className="d-flex flex-column site-container">
+      <div
+        className={
+          sidebarIsOpen
+            ? 'd-flex flex-column site-container active-cont'
+            : 'd-flex flex-column site-container'
+        }
+      >
         <ToastContainer position="bottom-center" limit={1} />
         <header>
           <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
+              <Button
+                variant="dark"
+                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+              >
+                <i className="fas fa-bars"></i>
+              </Button>
               <LinkContainer to="/">
                 <Navbar.Brand>Mishka-Zone</Navbar.Brand>
               </LinkContainer>
@@ -81,6 +95,19 @@ function App() {
             </Container>
           </Navbar>
         </header>
+        <div
+          className={
+            sidebarIsOpen
+              ? 'active-nav side-navbar d-flex justify-content-between flex-wrap flex-colun'
+              : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
+          }
+        >
+          <Nav className="flex-column text-white w-100 p-2">
+            <Nav.Item>
+              <strong>Categories</strong>
+            </Nav.Item>
+          </Nav>
+        </div>
         <main>
           <Container className="mt-3">
             <Routes>

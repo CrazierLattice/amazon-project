@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
-import logger from 'use-reducer-logger';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Product from '../components/Product';
@@ -12,6 +11,7 @@ import { Store } from '../Store';
 const HomeScreen = () => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { products, loading, error } = state;
+  const baseURL = 'http://localhost:5000';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +19,7 @@ const HomeScreen = () => {
         type: 'FETCH_REQUEST',
       });
       try {
-        const result = await axios.get('/api/products');
+        const result = await axios.get(`${baseURL}/api/products`);
         ctxDispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         ctxDispatch({ type: 'FETCH_FAIL', payload: err.message });
