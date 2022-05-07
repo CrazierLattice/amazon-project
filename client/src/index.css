@@ -32,7 +32,8 @@ main {
   height: 400px;
 }
 
-.btn-primary {
+.btn-primary,
+.btn-outline-primary {
   background-color: #f0c040;
   color: black;
 }
